@@ -47,7 +47,7 @@ public class PotStockController {
     }
 
     @DeleteMapping(value = "/{potStockId}")
-    public ResponseEntity<PotStockResDto> removeCartItem(@PathVariable(value = "potStockId") long id) throws SWException {
+    public ResponseEntity<PotStockResDto> removePotStock(@PathVariable(value = "potStockId") long id) throws SWException {
         log.info("Received request to delete pot stock");
         return new ResponseEntity<>(potStockService.deletePotStock(id), HttpStatus.OK);
     }

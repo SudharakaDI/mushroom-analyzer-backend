@@ -28,7 +28,7 @@ public class PotStock extends AbstractEntity{
     @JoinColumn(name = "pot_stock_id")
     private List<Expense> expenses;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "pot_stock_id")
     private List<Production> productions;
 

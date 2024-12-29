@@ -88,7 +88,8 @@ public class PotStockServiceImpl implements PotStockService {
         return modelMapper.map(potStockToDelete, PotStockResDto.class);
     }
 
-    private PotStock getPotStockById(long id) throws SWException {
+    @Override
+    public PotStock getPotStockById(long id) throws SWException {
         Optional<PotStock> potStock = potStockRepository.findById(id);
         if(potStock.isEmpty()){
             throw new SWException(
@@ -99,5 +100,10 @@ public class PotStockServiceImpl implements PotStockService {
             );
         }
         return potStock.get();
+    }
+
+    @Override
+    public void savePotStock(PotStock potStock) {
+        potStockRepository.save(potStock);
     }
 }
