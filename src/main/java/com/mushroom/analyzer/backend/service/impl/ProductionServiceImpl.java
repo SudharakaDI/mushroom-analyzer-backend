@@ -81,7 +81,7 @@ public class ProductionServiceImpl implements ProductionService {
         return modelMapper.map(production, ProductionResDto.class);
     }
 
-    private Production getProductionById(long id) throws SWException {
+    public Production getProductionById(long id) throws SWException {
         Optional<Production> production = productionRepository.findById(id);
         if(production.isEmpty()){
             throw new SWException(
@@ -92,6 +92,11 @@ public class ProductionServiceImpl implements ProductionService {
             );
         }
         return production.get();
+    }
+
+    @Override
+    public void saveProduction(Production production) {
+        productionRepository.save(production);
     }
 
 }

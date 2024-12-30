@@ -1,9 +1,6 @@
 package com.mushroom.analyzer.backend.model.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,5 +27,9 @@ public class Sale extends AbstractEntity{
 
     @OneToOne(cascade = CascadeType.ALL)
     private Income income;
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private StakeHolder seller;
 
 }
