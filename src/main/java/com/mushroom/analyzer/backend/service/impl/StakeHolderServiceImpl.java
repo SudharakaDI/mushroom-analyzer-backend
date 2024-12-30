@@ -31,7 +31,7 @@ public class StakeHolderServiceImpl implements StakeHolderService {
         return getStakeHolderById(id);
     }
 
-    private StakeHolder getStakeHolderById(long id) throws SWException {
+    public StakeHolder getStakeHolderById(long id) throws SWException {
         Optional<StakeHolder> stakeHolder = stakeHolderRepository.findById(id);
         if(stakeHolder.isEmpty()){
             throw new SWException(
