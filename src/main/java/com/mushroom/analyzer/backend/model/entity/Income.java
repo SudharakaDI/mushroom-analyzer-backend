@@ -1,7 +1,6 @@
 package com.mushroom.analyzer.backend.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.mushroom.analyzer.backend.utils.enums.ExpenseType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -22,7 +21,6 @@ public class Income extends AbstractEntity{
 
     private String description;
     private double amount;
-    private ExpenseType type;
 
     @Column(nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd")

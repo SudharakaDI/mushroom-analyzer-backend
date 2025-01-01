@@ -2,7 +2,6 @@ package com.mushroom.analyzer.backend.model.dto.res;
 
 import com.mushroom.analyzer.backend.model.entity.Expense;
 import com.mushroom.analyzer.backend.model.entity.Income;
-import com.mushroom.analyzer.backend.model.entity.StakeHolder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +16,5 @@ public class SalesResDto {
     private int numberOfItems;
     private Income income;
     private Expense expense;
-    private StakeHolder seller;
+    private StakeHolderResDto seller;
 }

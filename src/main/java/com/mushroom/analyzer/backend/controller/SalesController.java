@@ -35,9 +35,9 @@ public class SalesController {
     }
 
     @PostMapping
-    public ResponseEntity<SalesResDto> addSales(@RequestParam long productionId, @RequestBody SalesReqDto salesReqDto) throws SWException {
+    public ResponseEntity<SalesResDto> addSales(@RequestParam long salesId, @RequestBody SalesReqDto salesReqDto) throws SWException {
         log.info("Received request to add production");
-        return new ResponseEntity<>( saleService.addSales(productionId, salesReqDto), HttpStatus.OK);
+        return new ResponseEntity<>( saleService.addSales(salesId, salesReqDto), HttpStatus.OK);
     }
 
     @PutMapping(value = "/{salesId}")

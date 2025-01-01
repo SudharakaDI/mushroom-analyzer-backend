@@ -97,4 +97,9 @@ public class SaleServiceImpl implements SaleService {
         }
         return sale.get();
     }
+
+    @Override
+    public void saveSale(Sale sale) {
+        saleRepository.save(sale);
+    }
 }
