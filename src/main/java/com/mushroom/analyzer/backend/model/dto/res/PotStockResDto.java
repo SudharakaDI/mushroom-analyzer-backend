@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -17,4 +19,6 @@ public class PotStockResDto {
     private StakeHolderResDto mushroomSupplier;
     private int numberOfPots;
     private String description;
+    private List<ExpenseResDto> expenses;
+    private List<ProductionResDto> productions;
 }

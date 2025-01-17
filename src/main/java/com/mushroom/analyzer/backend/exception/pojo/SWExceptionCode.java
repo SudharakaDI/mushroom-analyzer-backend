@@ -19,6 +19,9 @@ public enum SWExceptionCode {
 
     //income
     MAIC001(Constant.ERROR_TYPE_INVALID_INPUT), // Income not found with the given id
+
+    //expense
+    MAEX001(Constant.ERROR_TYPE_INVALID_INPUT), // Expense not found with the given id
     //Pot Stock
     MAPS001(Constant.ERROR_TYPE_INVALID_INPUT), // Pot Stock not found with the given id
 

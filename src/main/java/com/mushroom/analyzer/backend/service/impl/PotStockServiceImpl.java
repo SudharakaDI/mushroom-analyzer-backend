@@ -9,6 +9,7 @@ import com.mushroom.analyzer.backend.model.entity.StakeHolder;
 import com.mushroom.analyzer.backend.model.repository.PotStockRepository;
 import com.mushroom.analyzer.backend.service.PotStockService;
 import com.mushroom.analyzer.backend.service.StakeHolderService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -54,6 +55,7 @@ public class PotStockServiceImpl implements PotStockService {
     }
 
     @Override
+    @Transactional
     public List<PotStockResDto> getAllPotStocks() {
         List<PotStock> potStocks = potStockRepository.findAll();
         return potStocks.stream()
@@ -62,6 +64,7 @@ public class PotStockServiceImpl implements PotStockService {
     }
 
     @Override
+    @Transactional
     public PotStockResDto getPotStock(long id) throws SWException {
      return modelMapper.map(getPotStockById(id), PotStockResDto.class);
     }
