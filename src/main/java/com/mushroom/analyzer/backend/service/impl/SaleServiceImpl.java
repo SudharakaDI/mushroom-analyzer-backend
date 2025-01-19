@@ -10,7 +10,6 @@ import com.mushroom.analyzer.backend.model.entity.Production;
 import com.mushroom.analyzer.backend.model.entity.Sale;
 import com.mushroom.analyzer.backend.model.entity.StakeHolder;
 import com.mushroom.analyzer.backend.model.repository.SaleRepository;
-import com.mushroom.analyzer.backend.model.repository.StakeHolderRepository;
 import com.mushroom.analyzer.backend.service.ProductionService;
 import com.mushroom.analyzer.backend.service.SaleService;
 import com.mushroom.analyzer.backend.service.StakeHolderService;
