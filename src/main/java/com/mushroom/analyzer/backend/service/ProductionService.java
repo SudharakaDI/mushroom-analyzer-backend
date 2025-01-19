@@ -3,6 +3,7 @@ package com.mushroom.analyzer.backend.service;
 import com.mushroom.analyzer.backend.exception.SWException;
 import com.mushroom.analyzer.backend.model.dto.req.ProductionReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.ProductionResDto;
+import com.mushroom.analyzer.backend.model.dto.res.ProductionSummaryDto;
 import com.mushroom.analyzer.backend.model.entity.Production;
 import java.util.List;
 
@@ -14,4 +15,5 @@ public interface ProductionService {
     ProductionResDto deleteProduction(long id) throws SWException;
     Production getProductionById(long id) throws SWException;
     void saveProduction(Production production);
+    ProductionSummaryDto getProductionSummary(long potStockId);
 }

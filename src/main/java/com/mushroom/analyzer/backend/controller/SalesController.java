@@ -3,6 +3,7 @@ package com.mushroom.analyzer.backend.controller;
 import com.mushroom.analyzer.backend.exception.SWException;
 import com.mushroom.analyzer.backend.model.dto.req.SalesReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.SalesResDto;
+import com.mushroom.analyzer.backend.model.dto.res.StakeHolderResDto;
 import com.mushroom.analyzer.backend.service.SaleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,9 +36,9 @@ public class SalesController {
     }
 
     @PostMapping
-    public ResponseEntity<SalesResDto> addSales(@RequestParam long salesId, @RequestBody SalesReqDto salesReqDto) throws SWException {
+    public ResponseEntity<SalesResDto> addSales(@RequestParam long productionId, @RequestBody SalesReqDto salesReqDto) throws SWException {
         log.info("Received request to add production");
-        return new ResponseEntity<>( saleService.addSales(salesId, salesReqDto), HttpStatus.OK);
+        return new ResponseEntity<>( saleService.addSales(productionId, salesReqDto), HttpStatus.OK);
     }
 
     @PutMapping(value = "/{salesId}")
@@ -50,6 +51,12 @@ public class SalesController {
     public ResponseEntity<SalesResDto> removeSale(@PathVariable(value = "salesId") long id) throws SWException {
         log.info("Received request to delete sales with id: {}", id);
         return new ResponseEntity<>(saleService.deleteSale(id), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/sellers")
+    public ResponseEntity<List<StakeHolderResDto>> getSellers()  {
+        log.info("Received request to get all sellers");
+        return new ResponseEntity<>( saleService.getSellers(), HttpStatus.OK);
     }
 
 }

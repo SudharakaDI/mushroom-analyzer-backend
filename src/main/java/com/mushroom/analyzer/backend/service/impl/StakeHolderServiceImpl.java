@@ -5,11 +5,12 @@ import com.mushroom.analyzer.backend.exception.pojo.SWExceptionCode;
 import com.mushroom.analyzer.backend.model.entity.StakeHolder;
 import com.mushroom.analyzer.backend.model.repository.StakeHolderRepository;
 import com.mushroom.analyzer.backend.service.StakeHolderService;
+import com.mushroom.analyzer.backend.utils.enums.StakeHolderType;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -18,10 +19,8 @@ import java.util.Optional;
 public class StakeHolderServiceImpl implements StakeHolderService {
 
     private final StakeHolderRepository stakeHolderRepository;
-    private final ModelMapper modelMapper;
 
-    public StakeHolderServiceImpl(StakeHolderRepository stakeHolderRepository, ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
+    public StakeHolderServiceImpl(StakeHolderRepository stakeHolderRepository) {
         this.stakeHolderRepository = stakeHolderRepository;
     }
 
@@ -42,5 +41,10 @@ public class StakeHolderServiceImpl implements StakeHolderService {
             );
         }
         return stakeHolder.get();
+    }
+
+    @Override
+    public List<StakeHolder> getAllSellers() {
+        return stakeHolderRepository.findAllByStakeHolderType(StakeHolderType.SELLER);
     }
 }

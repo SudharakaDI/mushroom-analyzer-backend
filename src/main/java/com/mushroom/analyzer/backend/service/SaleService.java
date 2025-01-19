@@ -3,8 +3,8 @@ package com.mushroom.analyzer.backend.service;
 import com.mushroom.analyzer.backend.exception.SWException;
 import com.mushroom.analyzer.backend.model.dto.req.SalesReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.SalesResDto;
+import com.mushroom.analyzer.backend.model.dto.res.StakeHolderResDto;
 import com.mushroom.analyzer.backend.model.entity.Sale;
-
 import java.util.List;
 
 public interface SaleService {
@@ -15,5 +15,6 @@ public interface SaleService {
     SalesResDto deleteSale(long id) throws SWException;
     Sale getSaleById(long id) throws SWException;
     void saveSale(Sale sale);
+    List<StakeHolderResDto> getSellers();
 
 }

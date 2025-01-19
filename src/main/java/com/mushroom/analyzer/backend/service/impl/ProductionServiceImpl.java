@@ -4,6 +4,7 @@ import com.mushroom.analyzer.backend.exception.SWException;
 import com.mushroom.analyzer.backend.exception.pojo.SWExceptionCode;
 import com.mushroom.analyzer.backend.model.dto.req.ProductionReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.ProductionResDto;
+import com.mushroom.analyzer.backend.model.dto.res.ProductionSummaryDto;
 import com.mushroom.analyzer.backend.model.entity.PotStock;
 import com.mushroom.analyzer.backend.model.entity.Production;
 import com.mushroom.analyzer.backend.model.repository.ProductionRepository;
@@ -97,6 +98,16 @@ public class ProductionServiceImpl implements ProductionService {
     @Override
     public void saveProduction(Production production) {
         productionRepository.save(production);
+    }
+
+    @Override
+    public ProductionSummaryDto getProductionSummary(long potStockId) {
+        List<Production> productions = productionRepository.findAll();
+        int totalItems = productions.stream()
+                .mapToInt(Production::getNumberOfItems)
+                .sum();
+
+        return new ProductionSummaryDto(totalItems);
     }
 
 }

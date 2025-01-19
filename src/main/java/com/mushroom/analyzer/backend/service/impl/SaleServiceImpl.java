@@ -5,9 +5,12 @@ import com.mushroom.analyzer.backend.exception.SWException;
 import com.mushroom.analyzer.backend.exception.pojo.SWExceptionCode;
 import com.mushroom.analyzer.backend.model.dto.req.SalesReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.SalesResDto;
+import com.mushroom.analyzer.backend.model.dto.res.StakeHolderResDto;
 import com.mushroom.analyzer.backend.model.entity.Production;
 import com.mushroom.analyzer.backend.model.entity.Sale;
+import com.mushroom.analyzer.backend.model.entity.StakeHolder;
 import com.mushroom.analyzer.backend.model.repository.SaleRepository;
+import com.mushroom.analyzer.backend.model.repository.StakeHolderRepository;
 import com.mushroom.analyzer.backend.service.ProductionService;
 import com.mushroom.analyzer.backend.service.SaleService;
 import com.mushroom.analyzer.backend.service.StakeHolderService;
@@ -101,5 +104,13 @@ public class SaleServiceImpl implements SaleService {
     @Override
     public void saveSale(Sale sale) {
         saleRepository.save(sale);
+    }
+
+    @Override
+    public List<StakeHolderResDto> getSellers() {
+        List<StakeHolder> sellers = stakeHolderService.getAllSellers();
+        return sellers.stream().map(
+                selller -> modelMapper.map(selller, StakeHolderResDto.class)
+        ).toList();
     }
 }

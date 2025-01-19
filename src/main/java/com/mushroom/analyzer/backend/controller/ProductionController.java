@@ -3,6 +3,7 @@ package com.mushroom.analyzer.backend.controller;
 import com.mushroom.analyzer.backend.exception.SWException;
 import com.mushroom.analyzer.backend.model.dto.req.ProductionReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.ProductionResDto;
+import com.mushroom.analyzer.backend.model.dto.res.ProductionSummaryDto;
 import com.mushroom.analyzer.backend.service.ProductionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,12 @@ public class ProductionController {
     public ResponseEntity<ProductionResDto> removeProduction(@PathVariable(value = "productionId") long id) throws SWException {
         log.info("Received request to delete production with id: {}", id);
         return new ResponseEntity<>(productionService.deleteProduction(id), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "summary/{potStockId}")
+    public ResponseEntity<ProductionSummaryDto> getProductionSummary(@PathVariable long potStockId) {
+        log.info("Received request to get production summary with pot stock id: {}", potStockId);
+        return new ResponseEntity<>( productionService.getProductionSummary(potStockId), HttpStatus.OK);
     }
 
 }
