@@ -3,6 +3,7 @@ package com.mushroom.analyzer.backend.controller;
 import com.mushroom.analyzer.backend.exception.SWException;
 import com.mushroom.analyzer.backend.model.dto.req.IncomeReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.IncomeResDto;
+import com.mushroom.analyzer.backend.model.dto.res.IncomeSummaryDto;
 import com.mushroom.analyzer.backend.service.IncomeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,12 @@ public class IncomeController {
     public ResponseEntity<IncomeResDto> removeIncome(@PathVariable(value = "incomeId") long id) throws SWException {
         log.info("Received request to delete income with id: {}", id);
         return new ResponseEntity<>(incomeService.deleteIncome(id), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "summary/{potStockId}")
+    public ResponseEntity<IncomeSummaryDto> getIncomeSummary(@PathVariable long potStockId) {
+        log.info("Received request to get income summary with pot stock id: {}", potStockId);
+        return new ResponseEntity<>( incomeService.getIncomeSummary(potStockId), HttpStatus.OK);
     }
 
 }

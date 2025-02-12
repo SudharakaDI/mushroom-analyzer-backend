@@ -46,7 +46,7 @@ public class ProductionServiceImpl implements ProductionService {
     @Override
     @Transactional
     public List<ProductionResDto> getAllProductions() {
-        List<Production> productions = productionRepository.findAll();
+        List<Production> productions = productionRepository.findAllByOrderByProductionDateDesc();
         return productions.stream()
                 .map(production -> modelMapper.map(production, ProductionResDto.class)).toList();
     }
@@ -101,8 +101,9 @@ public class ProductionServiceImpl implements ProductionService {
     }
 
     @Override
-    public ProductionSummaryDto getProductionSummary(long potStockId) {
-        List<Production> productions = productionRepository.findAll();
+    public ProductionSummaryDto getProductionSummary(long potStockId) throws SWException {
+        PotStock potStock = potStockService.getPotStockById(potStockId);
+        List<Production> productions = potStock.getProductions();
         int totalItems = productions.stream()
                 .mapToInt(Production::getNumberOfItems)
                 .sum();

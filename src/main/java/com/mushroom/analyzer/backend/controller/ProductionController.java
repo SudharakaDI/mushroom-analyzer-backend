@@ -53,7 +53,7 @@ public class ProductionController {
     }
 
     @GetMapping(value = "summary/{potStockId}")
-    public ResponseEntity<ProductionSummaryDto> getProductionSummary(@PathVariable long potStockId) {
+    public ResponseEntity<ProductionSummaryDto> getProductionSummary(@PathVariable long potStockId) throws SWException {
         log.info("Received request to get production summary with pot stock id: {}", potStockId);
         return new ResponseEntity<>( productionService.getProductionSummary(potStockId), HttpStatus.OK);
     }

@@ -4,6 +4,7 @@ import com.mushroom.analyzer.backend.exception.SWException;
 import com.mushroom.analyzer.backend.exception.pojo.SWExceptionCode;
 import com.mushroom.analyzer.backend.model.dto.req.ExpenseReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.ExpenseResDto;
+import com.mushroom.analyzer.backend.model.dto.res.ExpenseSummaryDto;
 import com.mushroom.analyzer.backend.model.entity.Expense;
 import com.mushroom.analyzer.backend.model.entity.PotStock;
 import com.mushroom.analyzer.backend.model.entity.Sale;
@@ -110,6 +111,16 @@ public class ExpenseServiceImpl implements ExpenseService {
         expense = expenseRepository.save(expense);
         log.debug("deleteExpense method finished");
         return modelMapper.map(expense, ExpenseResDto.class);
+    }
+
+    @Override
+    public ExpenseSummaryDto getExpenseSummary(long potStockId) {
+        List<Expense> expenses = expenseRepository.findAll();
+        double totalExpense = expenses.stream()
+                .mapToDouble(Expense::getAmount)
+                .sum();
+
+        return new ExpenseSummaryDto(totalExpense);
     }
 
     private Expense mapBasicExpenseAttributes(Expense expense, ExpenseReqDto expenseReqDto) {

@@ -15,5 +15,5 @@ public interface ProductionService {
     ProductionResDto deleteProduction(long id) throws SWException;
     Production getProductionById(long id) throws SWException;
     void saveProduction(Production production);
-    ProductionSummaryDto getProductionSummary(long potStockId);
+    ProductionSummaryDto getProductionSummary(long potStockId) throws SWException;
 }

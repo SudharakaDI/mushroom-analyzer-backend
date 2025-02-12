@@ -4,6 +4,7 @@ import com.mushroom.analyzer.backend.exception.SWException;
 import com.mushroom.analyzer.backend.exception.pojo.SWExceptionCode;
 import com.mushroom.analyzer.backend.model.dto.req.IncomeReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.IncomeResDto;
+import com.mushroom.analyzer.backend.model.dto.res.IncomeSummaryDto;
 import com.mushroom.analyzer.backend.model.entity.Income;
 import com.mushroom.analyzer.backend.model.entity.Sale;
 import com.mushroom.analyzer.backend.model.repository.IncomeRepository;
@@ -93,5 +94,15 @@ public class IncomeServiceImpl implements IncomeService {
         income = incomeRepository.save(income);
         log.debug("deleteIncome method finished");
         return modelMapper.map(income, IncomeResDto.class);
+    }
+
+    @Override
+    public IncomeSummaryDto getIncomeSummary(long potStockId) {
+        List<Income> incomes = incomeRepository.findAll();
+        double totalIncome = incomes.stream()
+                .mapToDouble(Income::getAmount)
+                .sum();
+
+        return new IncomeSummaryDto(totalIncome);
     }
 }

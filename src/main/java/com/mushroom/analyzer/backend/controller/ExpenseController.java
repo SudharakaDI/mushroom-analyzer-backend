@@ -3,6 +3,7 @@ package com.mushroom.analyzer.backend.controller;
 import com.mushroom.analyzer.backend.exception.SWException;
 import com.mushroom.analyzer.backend.model.dto.req.ExpenseReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.ExpenseResDto;
+import com.mushroom.analyzer.backend.model.dto.res.ExpenseSummaryDto;
 import com.mushroom.analyzer.backend.service.ExpenseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -40,8 +41,8 @@ public class ExpenseController {
         return new ResponseEntity<>( expenseService.addCapitalExpense(potStockId, expenseReqDto), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/operation/{salesId}")
-    public ResponseEntity<ExpenseResDto> addOperationalExpense(@PathVariable long salesId, @RequestBody ExpenseReqDto expenseReqDto) throws SWException {
+    @PostMapping(value = "/operation")
+    public ResponseEntity<ExpenseResDto> addOperationalExpense(@RequestParam long salesId, @RequestBody ExpenseReqDto expenseReqDto) throws SWException {
         log.info("Received request to add operational expense");
         return new ResponseEntity<>( expenseService.addOperationalExpense(salesId, expenseReqDto), HttpStatus.OK);
     }
@@ -57,5 +58,12 @@ public class ExpenseController {
         log.info("Received request to delete expense with id: {}", id);
         return new ResponseEntity<>(expenseService.deleteExpense(id), HttpStatus.OK);
     }
+
+    @GetMapping(value = "summary/{potStockId}")
+    public ResponseEntity<ExpenseSummaryDto> getExpenseSummary(@PathVariable long potStockId) {
+        log.info("Received request to get expense summary with pot stock id: {}", potStockId);
+        return new ResponseEntity<>( expenseService.getExpenseSummary(potStockId), HttpStatus.OK);
+    }
+
 
 }
