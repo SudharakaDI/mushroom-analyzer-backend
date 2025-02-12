@@ -6,15 +6,17 @@ import com.mushroom.analyzer.backend.model.dto.req.IncomeReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.IncomeResDto;
 import com.mushroom.analyzer.backend.model.dto.res.IncomeSummaryDto;
 import com.mushroom.analyzer.backend.model.entity.Income;
-import com.mushroom.analyzer.backend.model.entity.Sale;
+import com.mushroom.analyzer.backend.model.entity.PotStock;
 import com.mushroom.analyzer.backend.model.repository.IncomeRepository;
 import com.mushroom.analyzer.backend.service.IncomeService;
-import com.mushroom.analyzer.backend.service.SaleService;
+import com.mushroom.analyzer.backend.service.PotStockService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,25 +26,25 @@ public class IncomeServiceImpl implements IncomeService {
 
     private final ModelMapper modelMapper;
     private final IncomeRepository incomeRepository;
-    private final SaleService saleService;
+    private final PotStockService potStockService;
 
-    public IncomeServiceImpl(ModelMapper modelMapper, IncomeRepository incomeRepository, SaleService saleService) {
+    public IncomeServiceImpl(ModelMapper modelMapper, IncomeRepository incomeRepository, PotStockService potStockService) {
         this.modelMapper = modelMapper;
         this.incomeRepository = incomeRepository;
-        this.saleService = saleService;
+        this.potStockService = potStockService;
     }
 
     @Override
     @Transactional
-    public IncomeResDto addIncome(long saleId, IncomeReqDto incomeReqDto) throws SWException {
+    public IncomeResDto addIncome(long potStockId, IncomeReqDto incomeReqDto) throws SWException {
         log.debug("addIncome method started");
-        Sale sale = saleService.getSaleById(saleId);
+        PotStock potStock = potStockService.getPotStockById(potStockId);
         Income income = new Income();
         income.setAmount(incomeReqDto.getAmount());
         income.setDescription(incomeReqDto.getDescription());
         income.setDate(incomeReqDto.getDate());
-        sale.setIncome(income);
-        saleService.saveSale(sale);
+        potStock.getIncomes().add(income);
+        potStockService.savePotStock(potStock);
         return modelMapper.map(income, IncomeResDto.class);
     }
 
@@ -51,6 +53,7 @@ public class IncomeServiceImpl implements IncomeService {
         log.debug("getAllIncomes method started");
         List<Income> incomes = incomeRepository.findAll();
         return incomes.stream()
+                .sorted(Comparator.comparing(Income::getDate).reversed())
                 .map(income -> modelMapper.map(income, IncomeResDto.class)).toList();
     }
 
@@ -104,5 +107,16 @@ public class IncomeServiceImpl implements IncomeService {
                 .sum();
 
         return new IncomeSummaryDto(totalIncome);
+    }
+
+    @Override
+    @Transactional
+    public List<IncomeResDto> getAllIncomesForPotStock(long potStockId) throws SWException {
+        log.debug("getAllIncomesForPotStock method started");
+        PotStock potStock = potStockService.getPotStockById(potStockId);
+        List<Income> incomes = potStock.getIncomes();
+        return incomes.stream()
+                .sorted(Comparator.comparing(Income::getDate).reversed())
+                .map(income -> modelMapper.map(income, IncomeResDto.class)).toList();
     }
 }

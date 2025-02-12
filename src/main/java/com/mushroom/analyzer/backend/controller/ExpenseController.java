@@ -29,16 +29,22 @@ public class ExpenseController {
         return new ResponseEntity<>(expenseService.getAllExpenses(), HttpStatus.OK);
     }
 
+    @GetMapping(value="/pot-stock/{potStockId}")
+    public ResponseEntity<List<ExpenseResDto>> getAllExpensesForPotStock(@PathVariable long potStockId) throws SWException {
+        log.info("Received request to get all expenses for pots stock");
+        return new ResponseEntity<>(expenseService.getAllExpensesForPotStock(potStockId), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/{expenseId}")
     public ResponseEntity<ExpenseResDto> getExpense(@PathVariable long expenseId) throws SWException {
         log.info("Received request to get expense with id: {}", expenseId);
         return new ResponseEntity<>( expenseService.getExpense(expenseId), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/capital/{potStockId}")
-    public ResponseEntity<ExpenseResDto> addCapitalExpense(@PathVariable long potStockId, @RequestBody ExpenseReqDto expenseReqDto) throws SWException {
+    @PostMapping(value = "/{potStockId}")
+    public ResponseEntity<ExpenseResDto> addExpense(@PathVariable long potStockId, @RequestBody ExpenseReqDto expenseReqDto) throws SWException {
         log.info("Received request to add capital expense");
-        return new ResponseEntity<>( expenseService.addCapitalExpense(potStockId, expenseReqDto), HttpStatus.OK);
+        return new ResponseEntity<>( expenseService.addExpense(potStockId, expenseReqDto), HttpStatus.OK);
     }
 
     @PostMapping(value = "/operation")
@@ -48,7 +54,7 @@ public class ExpenseController {
     }
 
     @PutMapping(value = "/{expenseId}")
-    public ResponseEntity<ExpenseResDto> updateIncome(@PathVariable(value = "expenseId") long id, @RequestBody ExpenseReqDto expenseReqDto) throws SWException {
+    public ResponseEntity<ExpenseResDto> updateExpense(@PathVariable(value = "expenseId") long id, @RequestBody ExpenseReqDto expenseReqDto) throws SWException {
         log.info("Received request to update expense details with id: {}", id);
         return new ResponseEntity<>(expenseService.updateExpense(id, expenseReqDto), HttpStatus.OK);
     }

@@ -5,9 +5,7 @@ import com.mushroom.analyzer.backend.exception.pojo.SWExceptionCode;
 import com.mushroom.analyzer.backend.model.dto.req.ExpenseReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.ExpenseResDto;
 import com.mushroom.analyzer.backend.model.dto.res.ExpenseSummaryDto;
-import com.mushroom.analyzer.backend.model.entity.Expense;
-import com.mushroom.analyzer.backend.model.entity.PotStock;
-import com.mushroom.analyzer.backend.model.entity.Sale;
+import com.mushroom.analyzer.backend.model.entity.*;
 import com.mushroom.analyzer.backend.model.repository.ExpenseRepository;
 import com.mushroom.analyzer.backend.service.ExpenseService;
 import com.mushroom.analyzer.backend.service.PotStockService;
@@ -19,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,13 +38,26 @@ public class ExpenseServiceImpl implements ExpenseService {
         this.expenseRepository = expenseRepository;
     }
 
+//    @Override
+//    @Transactional
+//    public ExpenseResDto addCapitalExpense(long potStockId, ExpenseReqDto expenseReqDto) throws SWException {
+//        log.debug("addCapitalExpense method started");
+//        PotStock potStock = potStockService.getPotStockById(potStockId);
+//        Expense expense = new Expense();
+//        expense.setType(ExpenseType.CAPITAL);
+//        potStock.getExpenses().add(mapBasicExpenseAttributes(expense, expenseReqDto));
+//        potStockService.savePotStock(potStock);
+//
+//        return modelMapper.map(expense, ExpenseResDto.class);
+//    }
+
     @Override
     @Transactional
-    public ExpenseResDto addCapitalExpense(long potStockId, ExpenseReqDto expenseReqDto) throws SWException {
-        log.debug("addCapitalExpense method started");
+    public ExpenseResDto addExpense(long potStockId, ExpenseReqDto expenseReqDto) throws SWException {
+        log.debug("addExpense method started");
         PotStock potStock = potStockService.getPotStockById(potStockId);
         Expense expense = new Expense();
-        expense.setType(ExpenseType.CAPITAL);
+        expense.setType(expenseReqDto.getExpenseType());
         potStock.getExpenses().add(mapBasicExpenseAttributes(expense, expenseReqDto));
         potStockService.savePotStock(potStock);
 
@@ -70,6 +82,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         log.debug("getAllExpenses method started");
         List<Expense> expenses = expenseRepository.findAll();
         return expenses.stream()
+                .sorted(Comparator.comparing(Expense::getDate).reversed())
                 .map(expense -> modelMapper.map(expense, ExpenseResDto.class)).toList();
     }
 
@@ -121,6 +134,17 @@ public class ExpenseServiceImpl implements ExpenseService {
                 .sum();
 
         return new ExpenseSummaryDto(totalExpense);
+    }
+
+    @Override
+    @Transactional
+    public List<ExpenseResDto> getAllExpensesForPotStock(long potStockId) throws SWException {
+        log.debug("getAllExpensesForPotStock method started");
+        PotStock potStock = potStockService.getPotStockById(potStockId);
+        List<Expense> expenses = potStock.getExpenses();
+        return expenses.stream()
+                .sorted(Comparator.comparing(Expense::getDate).reversed())
+                .map(expense -> modelMapper.map(expense, ExpenseResDto.class)).toList();
     }
 
     private Expense mapBasicExpenseAttributes(Expense expense, ExpenseReqDto expenseReqDto) {

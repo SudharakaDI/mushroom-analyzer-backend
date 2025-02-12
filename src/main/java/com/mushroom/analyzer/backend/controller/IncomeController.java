@@ -29,6 +29,13 @@ public class IncomeController {
         return new ResponseEntity<>(incomeService.getAllIncomes(), HttpStatus.OK);
     }
 
+    @GetMapping(value="/pot-stock/{potStockId}")
+    public ResponseEntity<List<IncomeResDto>> getAllIncomesForPotStock(@PathVariable long potStockId) throws SWException {
+        log.info("Received request to get all incomes for pot stock");
+        return new ResponseEntity<>(incomeService.getAllIncomesForPotStock(potStockId), HttpStatus.OK);
+    }
+
+
     @GetMapping(value = "/{incomeId}")
     public ResponseEntity<IncomeResDto> getIncome(@PathVariable long incomeId) throws SWException {
         log.info("Received request to get income with id: {}", incomeId);
@@ -36,9 +43,9 @@ public class IncomeController {
     }
 
     @PostMapping
-    public ResponseEntity<IncomeResDto> addIncome(@RequestParam long salesId, @RequestBody IncomeReqDto incomeReqDto) throws SWException {
+    public ResponseEntity<IncomeResDto> addIncome(@RequestParam long potStockId, @RequestBody IncomeReqDto incomeReqDto) throws SWException {
         log.info("Received request to add income");
-        return new ResponseEntity<>( incomeService.addIncome(salesId, incomeReqDto), HttpStatus.OK);
+        return new ResponseEntity<>( incomeService.addIncome(potStockId, incomeReqDto), HttpStatus.OK);
     }
 
     @PutMapping(value = "/{incomeId}")

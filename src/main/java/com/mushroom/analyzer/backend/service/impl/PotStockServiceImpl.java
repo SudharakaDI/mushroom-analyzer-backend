@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -125,28 +126,24 @@ public class PotStockServiceImpl implements PotStockService {
     public List<ProductionResDto> getProductionsByPotStock(long potStockId) throws SWException {
         log.debug("getProductionsByPotStock method started");
         PotStock potStock = getPotStockById(potStockId);
-        return potStock.getProductions().stream().map(production -> modelMapper.map(production, ProductionResDto.class)).toList();
+        return potStock.getProductions().stream()
+                .sorted(Comparator.comparing(Production::getProductionDate).reversed())
+                .map(production -> modelMapper.map(production, ProductionResDto.class)).toList();
     }
+
 
     @Override
     @Transactional
     public PotStockSummaryResDto getPotStockSummary(long id) throws SWException {
         log.debug("getPotStockSummary method started");
         PotStock potStock = getPotStockById(id);
-        List<Production> productions = potStock.getProductions();
 
-        int totalProduction = productions.stream()
-                .mapToInt(Production::getNumberOfItems)
-                .sum();
-
-        List<Sale> sales = potStock.getProductions().stream().flatMap(production -> production.getSales().stream()).toList();
-
-        double totalIncome = sales.stream().mapToDouble(sale-> (sale.getIncome() != null) ? sale.getIncome().getAmount() : 0.0).sum();
-        double totalSalesExpense = sales.stream().mapToDouble(sale-> (sale.getExpense() != null) ? sale.getExpense().getAmount() : 0.0).sum();
-        double totalCapitalExpense = potStock.getExpenses().stream().mapToDouble(Expense::getAmount).sum();
-        double totalExpense = totalCapitalExpense + totalSalesExpense;
+        int totalProduction = potStock.getProductions().stream().mapToInt(Production::getNumberOfItems).sum();
+        double totalIncome = potStock.getIncomes().stream().mapToDouble(Income::getAmount).sum();
+        double totalExpense = potStock.getExpenses().stream().mapToDouble(Expense::getAmount).sum();
         double totalProfit = totalIncome - totalExpense;
 
         return new PotStockSummaryResDto(totalProduction,totalIncome,totalExpense,totalProfit);
     }
+
 }

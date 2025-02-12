@@ -8,4 +8,5 @@ import java.util.List;
 public interface ProductionRepository extends JpaRepository<Production, Long> {
     List<Production> findAllByOrderByProductionDateDesc();
 
+
 }
