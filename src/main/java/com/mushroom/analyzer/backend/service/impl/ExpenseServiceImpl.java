@@ -5,10 +5,12 @@ import com.mushroom.analyzer.backend.exception.pojo.SWExceptionCode;
 import com.mushroom.analyzer.backend.model.dto.req.ExpenseReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.ExpenseResDto;
 import com.mushroom.analyzer.backend.model.dto.res.ExpenseSummaryDto;
+import com.mushroom.analyzer.backend.model.dto.res.PotStockMinimalResDto;
 import com.mushroom.analyzer.backend.model.entity.*;
 import com.mushroom.analyzer.backend.model.repository.ExpenseRepository;
 import com.mushroom.analyzer.backend.service.ExpenseService;
 import com.mushroom.analyzer.backend.service.PotStockService;
+import com.mushroom.analyzer.backend.service.ProductionService;
 import com.mushroom.analyzer.backend.service.SaleService;
 import com.mushroom.analyzer.backend.utils.enums.ExpenseType;
 import jakarta.transaction.Transactional;
@@ -17,6 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -30,12 +33,14 @@ public class ExpenseServiceImpl implements ExpenseService {
     private final PotStockService potStockService;
     private final SaleService saleService;
     private final ExpenseRepository expenseRepository;
+    private final ProductionService productionService;
 
-    public ExpenseServiceImpl(ModelMapper modelMapper, PotStockService potStockService, SaleService saleService, ExpenseRepository expenseRepository) {
+    public ExpenseServiceImpl(ModelMapper modelMapper, PotStockService potStockService, SaleService saleService, ExpenseRepository expenseRepository, ProductionService productionService) {
         this.modelMapper = modelMapper;
         this.potStockService = potStockService;
         this.saleService = saleService;
         this.expenseRepository = expenseRepository;
+        this.productionService = productionService;
     }
 
 //    @Override
@@ -53,15 +58,56 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     @Transactional
-    public ExpenseResDto addExpense(long potStockId, ExpenseReqDto expenseReqDto) throws SWException {
+    public List<ExpenseResDto> addExpense(long potStockId, ExpenseReqDto expenseReqDto) throws SWException {
         log.debug("addExpense method started");
-        PotStock potStock = potStockService.getPotStockById(potStockId);
-        Expense expense = new Expense();
-        expense.setType(expenseReqDto.getExpenseType());
-        potStock.getExpenses().add(mapBasicExpenseAttributes(expense, expenseReqDto));
-        potStockService.savePotStock(potStock);
+        List<Expense> addedExpenses = new ArrayList<>();
+        if(expenseReqDto.getExpenseType() == ExpenseType.CAPITAL){
+            PotStock potStock = potStockService.getPotStockById(potStockId);
+            Expense expense = new Expense();
+            expense.setType(expenseReqDto.getExpenseType());
+            mapBasicExpenseAttributes(expense, expenseReqDto);
+            potStock.getExpenses().add(expense);
+            addedExpenses.add(expense);
+            potStockService.savePotStock(potStock);
+        }
+        else{
+            int totalDayProduction  = productionService.getProductionCountForDate(expenseReqDto.getDate());
+            List<PotStockMinimalResDto> potStocks = potStockService.getAllPotStocksMinimal();
 
-        return modelMapper.map(expense, ExpenseResDto.class);
+        for(PotStockMinimalResDto potStockMinimalResDto:potStocks){
+            PotStock potStock = potStockService.getPotStockById(potStockMinimalResDto.getId());
+            Expense expense = new Expense();
+            expense.setAmount((double) potStockService.getProductionCountByPotStockAndDate(potStock.getId(), expenseReqDto.getDate()) /totalDayProduction * expenseReqDto.getAmount());
+            expense.setType(expenseReqDto.getExpenseType());
+            expense.setDescription(expenseReqDto.getDescription());
+            expense.setDate(expenseReqDto.getDate());
+            potStock.getExpenses().add(expense);
+            addedExpenses.add(expense);
+            potStockService.savePotStock(potStock);
+        }
+
+        }
+
+        return addedExpenses.stream().map(expense -> modelMapper.map(expense, ExpenseResDto.class)).toList();
+
+
+//        log.debug("addIncome method started");
+//        List<Income> addedIncomes = new ArrayList<>();
+//        int totalDayProduction = productionService.getProductionCountForDate(incomeReqDto.getDate());
+//        List<PotStockMinimalResDto> potStocks = potStockService.getAllPotStocksMinimal();
+//
+//        for(PotStockMinimalResDto potStockMinimalResDto:potStocks){
+//            PotStock potStock = potStockService.getPotStockById(potStockMinimalResDto.getId());
+//            Income income = new Income();
+//            income.setAmount((double) potStockService.getProductionCountByPotStockAndDate(potStock.getId(), incomeReqDto.getDate()) /totalDayProduction * incomeReqDto.getAmount());
+//            income.setDescription(incomeReqDto.getDescription());
+//            income.setDate(incomeReqDto.getDate());
+//            potStock.getIncomes().add(income);
+//            addedIncomes.add(income);
+//            potStockService.savePotStock(potStock);
+//        }
+//
+//        return addedIncomes.stream().map(income -> modelMapper.map(income, IncomeResDto.class)).toList();
     }
 
     @Override

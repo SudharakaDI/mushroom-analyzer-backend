@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IncomeService {
 //    IncomeResDto addIncome(long saleId, IncomeReqDto salesReqDto) throws SWException;
-    IncomeResDto addIncome(long potStockId, IncomeReqDto salesReqDto) throws SWException;
+    List<IncomeResDto> addIncome(long potStockId, IncomeReqDto salesReqDto) throws SWException;
     List<IncomeResDto> getAllIncomes();
     IncomeResDto getIncome(long id) throws SWException;
     IncomeResDto updateIncome(long id, IncomeReqDto incomeReqDto) throws SWException;

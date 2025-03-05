@@ -5,17 +5,20 @@ import com.mushroom.analyzer.backend.exception.pojo.SWExceptionCode;
 import com.mushroom.analyzer.backend.model.dto.req.IncomeReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.IncomeResDto;
 import com.mushroom.analyzer.backend.model.dto.res.IncomeSummaryDto;
+import com.mushroom.analyzer.backend.model.dto.res.PotStockMinimalResDto;
 import com.mushroom.analyzer.backend.model.entity.Income;
 import com.mushroom.analyzer.backend.model.entity.PotStock;
 import com.mushroom.analyzer.backend.model.repository.IncomeRepository;
 import com.mushroom.analyzer.backend.service.IncomeService;
 import com.mushroom.analyzer.backend.service.PotStockService;
+import com.mushroom.analyzer.backend.service.ProductionService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -27,25 +30,37 @@ public class IncomeServiceImpl implements IncomeService {
     private final ModelMapper modelMapper;
     private final IncomeRepository incomeRepository;
     private final PotStockService potStockService;
+    private final ProductionService productionService;
 
-    public IncomeServiceImpl(ModelMapper modelMapper, IncomeRepository incomeRepository, PotStockService potStockService) {
+    public IncomeServiceImpl(ModelMapper modelMapper, IncomeRepository incomeRepository, PotStockService potStockService, ProductionService productionService) {
         this.modelMapper = modelMapper;
         this.incomeRepository = incomeRepository;
         this.potStockService = potStockService;
+        this.productionService = productionService;
     }
 
     @Override
     @Transactional
-    public IncomeResDto addIncome(long potStockId, IncomeReqDto incomeReqDto) throws SWException {
+    public List<IncomeResDto> addIncome(long potStockId, IncomeReqDto incomeReqDto) throws SWException {
         log.debug("addIncome method started");
-        PotStock potStock = potStockService.getPotStockById(potStockId);
-        Income income = new Income();
-        income.setAmount(incomeReqDto.getAmount());
-        income.setDescription(incomeReqDto.getDescription());
-        income.setDate(incomeReqDto.getDate());
-        potStock.getIncomes().add(income);
-        potStockService.savePotStock(potStock);
-        return modelMapper.map(income, IncomeResDto.class);
+        List<Income> addedIncomes = new ArrayList<>();
+        int totalDayProduction = productionService.getProductionCountForDate(incomeReqDto.getDate());
+        List<PotStockMinimalResDto> potStocks = potStockService.getAllPotStocksMinimal();
+
+        for(PotStockMinimalResDto potStockMinimalResDto:potStocks){
+            PotStock potStock = potStockService.getPotStockById(potStockMinimalResDto.getId());
+            Income income = new Income();
+            double incomeAmount = (double) potStockService.getProductionCountByPotStockAndDate(potStock.getId(), incomeReqDto.getDate()) /totalDayProduction * incomeReqDto.getAmount();
+            income.setAmount(Math.round(incomeAmount*100.0)/100.0);
+            income.setDescription(incomeReqDto.getDescription());
+            income.setDate(incomeReqDto.getDate());
+            potStock.getIncomes().add(income);
+            addedIncomes.add(income);
+            potStockService.savePotStock(potStock);
+        }
+
+        return addedIncomes.stream().map(income -> modelMapper.map(income, IncomeResDto.class)).toList();
+
     }
 
     @Override

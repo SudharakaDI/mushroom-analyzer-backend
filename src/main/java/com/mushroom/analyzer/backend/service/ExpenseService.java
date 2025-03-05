@@ -8,7 +8,7 @@ import com.mushroom.analyzer.backend.model.dto.res.ExpenseSummaryDto;
 import java.util.List;
 
 public interface ExpenseService {
-    ExpenseResDto addExpense(long potStockId, ExpenseReqDto expenseReqDto) throws SWException;
+    List<ExpenseResDto> addExpense(long potStockId, ExpenseReqDto expenseReqDto) throws SWException;
     ExpenseResDto addOperationalExpense(long salesId, ExpenseReqDto expenseReqDto) throws SWException;
     List<ExpenseResDto> getAllExpenses();
     ExpenseResDto getExpense(long id) throws SWException;

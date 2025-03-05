@@ -5,6 +5,8 @@ import com.mushroom.analyzer.backend.model.dto.req.ProductionReqDto;
 import com.mushroom.analyzer.backend.model.dto.res.ProductionResDto;
 import com.mushroom.analyzer.backend.model.dto.res.ProductionSummaryDto;
 import com.mushroom.analyzer.backend.model.entity.Production;
+
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ProductionService {
@@ -16,4 +18,5 @@ public interface ProductionService {
     Production getProductionById(long id) throws SWException;
     void saveProduction(Production production);
     ProductionSummaryDto getProductionSummary(long potStockId) throws SWException;
+    int getProductionCountForDate(LocalDate date);
 }

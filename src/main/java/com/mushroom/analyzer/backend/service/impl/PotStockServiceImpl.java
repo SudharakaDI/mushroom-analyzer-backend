@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -130,6 +131,17 @@ public class PotStockServiceImpl implements PotStockService {
                 .sorted(Comparator.comparing(Production::getProductionDate).reversed())
                 .map(production -> modelMapper.map(production, ProductionResDto.class)).toList();
     }
+
+    @Transactional
+    @Override
+    public int getProductionCountByPotStockAndDate(long potStockId, LocalDate date) throws SWException {
+        log.debug("getProductionCountByPotStockAndDate method started");
+        PotStock potStock = getPotStockById(potStockId);
+        return potStock.getProductions().stream()
+                .filter(production -> production.getProductionDate().equals(date))
+                .mapToInt(Production::getNumberOfItems).sum();
+    }
+
 
 
     @Override

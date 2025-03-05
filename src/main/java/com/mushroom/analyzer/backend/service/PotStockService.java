@@ -8,6 +8,7 @@ import com.mushroom.analyzer.backend.model.dto.res.PotStockSummaryResDto;
 import com.mushroom.analyzer.backend.model.dto.res.ProductionResDto;
 import com.mushroom.analyzer.backend.model.entity.PotStock;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface PotStockService {
@@ -20,5 +21,7 @@ public interface PotStockService {
     void savePotStock(PotStock potStock);
     List<PotStockMinimalResDto> getAllPotStocksMinimal();
     List<ProductionResDto> getProductionsByPotStock(long potStockId) throws SWException;
+    int getProductionCountByPotStockAndDate(long potStockId, LocalDate date) throws SWException;
+
     PotStockSummaryResDto getPotStockSummary(long id) throws SWException;
 }

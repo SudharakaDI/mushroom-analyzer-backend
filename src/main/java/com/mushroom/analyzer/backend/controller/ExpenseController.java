@@ -42,7 +42,7 @@ public class ExpenseController {
     }
 
     @PostMapping(value = "/{potStockId}")
-    public ResponseEntity<ExpenseResDto> addExpense(@PathVariable long potStockId, @RequestBody ExpenseReqDto expenseReqDto) throws SWException {
+    public ResponseEntity<List<ExpenseResDto>> addExpense(@PathVariable long potStockId, @RequestBody ExpenseReqDto expenseReqDto) throws SWException {
         log.info("Received request to add capital expense");
         return new ResponseEntity<>( expenseService.addExpense(potStockId, expenseReqDto), HttpStatus.OK);
     }

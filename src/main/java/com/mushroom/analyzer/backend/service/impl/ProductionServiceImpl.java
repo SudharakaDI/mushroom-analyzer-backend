@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -109,6 +110,12 @@ public class ProductionServiceImpl implements ProductionService {
                 .sum();
 
         return new ProductionSummaryDto(totalItems);
+    }
+
+    @Override
+    public int getProductionCountForDate(LocalDate date) {
+        List<Production> productions = productionRepository.findProductionByProductionDate(date);
+        return productions.stream().mapToInt(Production::getNumberOfItems).sum();
     }
 
 }

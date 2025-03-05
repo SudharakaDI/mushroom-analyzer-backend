@@ -43,7 +43,7 @@ public class IncomeController {
     }
 
     @PostMapping
-    public ResponseEntity<IncomeResDto> addIncome(@RequestParam long potStockId, @RequestBody IncomeReqDto incomeReqDto) throws SWException {
+    public ResponseEntity<List<IncomeResDto>> addIncome(@RequestParam long potStockId, @RequestBody IncomeReqDto incomeReqDto) throws SWException {
         log.info("Received request to add income");
         return new ResponseEntity<>( incomeService.addIncome(potStockId, incomeReqDto), HttpStatus.OK);
     }
